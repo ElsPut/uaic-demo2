@@ -38,5 +38,17 @@ jobs:
         uses: azure/cli@v2
         with:
           inlineScript: az group create --name ${{env.RG_Name}} --location ${{env.RG_Location}}
+      - name: deploy storage
+        uses: azure/arm-deploy@v2
+        id: deploy-sa
+        with:
+          resourceGroupName: ${{env.RG_Name}}
+          template: ./storage.bicep
 
+      - name: deploy container
+        uses: azure/arm-deploy@v2
+        with:
+         resourceGroupName: ${{env.RG_Name}}
+         template: ./blobcontainer.bicep
+         parameters: mysaname=${{steps.deploy-sa.outputs.mysaname}}
       
